@@ -1,7 +1,7 @@
 gazebo:
   osx:
     homebrew:
-      packages: [gazebo7]
+      packages: [gazebo8]
 python:
   osx:
     homebrew:
