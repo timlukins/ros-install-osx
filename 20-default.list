@@ -1,0 +1,10 @@
+# os-specific listings first
+yaml https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/osx-homebrew.yaml osx
+
+# generic
+yaml https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/base.yaml
+yaml https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/python.yaml
+yaml https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/ruby.yaml
+gbpdistro https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/fuerte.yaml fuerte
+
+# newer distributions (Groovy, Hydro, ...) must not be listed anymore, they are being fetched from the rosdistro index.yaml instead
