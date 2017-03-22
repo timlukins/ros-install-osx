@@ -128,14 +128,14 @@ do_install()
 
   # Grabbing these older meshes allows rviz to run with Ogre 1.7 rather than Ogre 1.8+.
   # Some details here: https://github.com/ros-visualization/rviz/issues/782
-  if [ -d src/rviz ]; then
-    pushd src/rviz/ogre_media/models
-    curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_cone.mesh > rviz_cone.mesh
-    curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_cube.mesh > rviz_cube.mesh
-    curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_cylinder.mesh > rviz_cylinder.mesh
-    curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_sphere.mesh > rviz_sphere.mesh
-    popd
-  fi
+  # if [ -d src/rviz ]; then
+  #   pushd src/rviz/ogre_media/models
+  #   curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_cone.mesh > rviz_cone.mesh
+  #   curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_cube.mesh > rviz_cube.mesh
+  #   curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_cylinder.mesh > rviz_cylinder.mesh
+  #   curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_sphere.mesh > rviz_sphere.mesh
+  #   popd
+  # fi
 
   # This patch originates from here: https://github.com/ros/catkin/pull/784
   if [ -d src/catkin ]; then
