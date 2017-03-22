@@ -246,7 +246,7 @@ libogg:
 libogre-dev:
   osx:
     homebrew:
-      packages: [ogre]
+      packages: [ogre1.9]
 libopencv-dev:
   osx:
     homebrew:
