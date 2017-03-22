@@ -156,6 +156,10 @@ do_install()
     sudo mkdir -p ${ROS_INSTALL_DIR}
     sudo chown $USER ${ROS_INSTALL_DIR}
   fi
+  
+  sudo chown -R $USER:admin /usr/local
+  # TODO: change hardcoded version.
+  sudo ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/mkspecs
 
   # Parallel build.
   catkin config --install  --install-space ${ROS_INSTALL_DIR} --cmake-args \
