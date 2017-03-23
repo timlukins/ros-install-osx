@@ -165,7 +165,7 @@ do_install()
   # TODO: change hardcoded version.
   ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/mkspecs || true
   ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/plugins || true
-  ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5
+  ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5 || true
   
   # Parallel build.
   catkin config --install  --install-space ${ROS_INSTALL_DIR} --cmake-args \
