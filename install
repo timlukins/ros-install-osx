@@ -167,6 +167,8 @@ do_install()
   ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/plugins || true
   ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5 || true
   
+  brew remove opencv || true
+  
   # Parallel build.
   catkin config --install  --install-space ${ROS_INSTALL_DIR} --cmake-args \
     -DCATKIN_ENABLE_TESTING=1 \
