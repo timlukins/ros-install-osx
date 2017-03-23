@@ -1,0 +1,11 @@
+--- src/cmake_modules/cmake/Modules/FindUUID.cmake      2017-03-23 09:12:18.000000000 +0800
++++ src/cmake_modules/cmake/Modules/FindUUID.cmake.new  2017-03-23 09:12:44.000000000 +0800
+@@ -14,7 +14,7 @@
+   endif(UUID_LIBRARIES)
+
+ else()
+-  find_path(UUID_INCLUDE_DIRS uuid/uuid.h)
++  find_path(UUID_INCLUDE_DIRS ossp/uuid.h)
+   find_library(UUID_LIBRARIES NAMES uuid PATH)
+
+   if(UUID_INCLUDE_DIRS)
