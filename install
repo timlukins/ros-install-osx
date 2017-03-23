@@ -102,6 +102,9 @@ do_install()
   
   brew install --force qt5 || true
   brew link --force qt5 || true
+  
+  brew remove pyqt5 || true
+  brew install pyqt5 --with-python
 
   # Initialize and update rosdep
   if [ ! -d /etc/ros/rosdep/ ]; then
@@ -137,7 +140,7 @@ do_install()
   #   curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_sphere.mesh > rviz_sphere.mesh
   #   popd
   # fi
-
+  
   # This patch originates from here: https://github.com/ros/catkin/pull/784
   if [ -d src/catkin ]; then
     pushd src/catkin/cmake
@@ -147,6 +150,7 @@ do_install()
 
   # Package dependencies.
   rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y --as-root pip:no --skip-keys=python-qt-bindings-qwt5
+  curl https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/uuid.patch | patch -p0
 
   # Clean out or create the install directory.
   if [ -d ${ROS_INSTALL_DIR} ]; then
@@ -159,8 +163,10 @@ do_install()
   
   sudo chown -R $USER:admin /usr/local
   # TODO: change hardcoded version.
-  sudo ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/mkspecs
-
+  ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/mkspecs || true
+  ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/plugins || true
+  ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5
+  
   # Parallel build.
   catkin config --install  --install-space ${ROS_INSTALL_DIR} --cmake-args \
     -DCATKIN_ENABLE_TESTING=1 \
