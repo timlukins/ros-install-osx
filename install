@@ -201,6 +201,13 @@ do_install()
   echo
   echo "  source ${ROS_INSTALL_DIR}/setup.bash"
   echo
+
+  if grep -Fxq "export ${ROS_INSTALL_DIR}/setup.bash" ~/.bash_profile
+  then
+    echo "ROS PATH already in ~/.bash_profile"
+  else
+    echo "export ${ROS_INSTALL_DIR}/setup.bash" >> ~/.bash_profile
+  fi
   
   # Check for SIP if on OSX/macOS 10.11 (El Capitan) or later
   if [[ `sw_vers -productVersion` > "10.10" ]]
