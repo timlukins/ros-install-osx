@@ -183,7 +183,7 @@ do_install()
   sudo chown -R $USER:admin /usr/local
   # TODO: change hardcoded version.
   ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/mkspecs || true
-  ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/plugins || true
+  ln -s /usr/local/Cellar/qt5/5.8.0_1/plugins /usr/local/plugins || true
   ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5 || true
   
   brew remove opencv || true
