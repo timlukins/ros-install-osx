@@ -104,6 +104,25 @@ do_install()
   brew link --force qt5 || true
   
   brew remove pyqt5 || true
+  # If installation failed with error:
+  # .  Error: Failed to determine the detail of your Qt installation. Try again using
+  # .  the --verbose flag to see more detail about the problem.
+  # .  Querying qmake about your Qt installation...
+  # .  Determining the details of your Qt installation...
+  # .  /usr/local/opt/qt5/bin/qmake -o qtdetail.mk qtdetail.pro
+  # .  Project ERROR: Could not resolve SDK Path for 'MacOSX10.12'
+  # (1) We need to make sure the Xcode is installed and
+  # MacOS SDK PATH is select to correct location
+  # using: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+  # (2) reinstall qt5:
+  # .  brew uninstall qt5
+  # .  brew install --force qt5
+  # .  brew link --force qt5
+  # (3) finally: brew install pyqt5 --with-python
+  # 
+  # Note: the installation process may take long time,
+  # which will not generate any output in 10 mins
+  # leading travis build failure.
   brew install pyqt5 --with-python
 
   # Initialize and update rosdep
