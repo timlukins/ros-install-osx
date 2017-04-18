@@ -180,10 +180,11 @@ do_install()
     sudo chown $USER ${ROS_INSTALL_DIR}
   fi
 
-  sudo chown -R $USER:admin /usr/local
   # TODO: change hardcoded version.
-  ln -s /usr/local/Cellar/qt/5.8.0_2/mkspecs /usr/local/mkspecs || true
-  ln -s /usr/local/Cellar/qt/5.8.0_2/plugins /usr/local/plugins || true
+  sudo ln -s /usr/local/Cellar/qt/5.8.0_2/mkspecs /usr/local/mkspecs || true
+  sudo chown -R $USER:admin /usr/local/Cellar/qt/5.8.0_2/mkspecs
+  sudo ln -s /usr/local/Cellar/qt/5.8.0_2/plugins /usr/local/plugins || true
+  sudo chown -R $USER:admin /usr/local/Cellar/qt/5.8.0_2/plugins
   ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5 || true
 
   brew remove opencv || true
