@@ -100,10 +100,13 @@ do_install()
   brew install libyaml || true
   pip install -U setuptools rosdep rosinstall_generator wstool rosinstall catkin_tools bloom empy sphinx pycurl
 
+	brew uninstall qt4 || true
+	brew uninstall qt4-no-webkit || true
+
   brew install --force qt5 || true
   brew link --force qt5 || true
 
-  brew remove pyqt5 || true
+  #brew remove pyqt5 || true
   # If installation failed with error:
   # .  Error: Failed to determine the detail of your Qt installation. Try again using
   # .  the --verbose flag to see more detail about the problem.
@@ -124,6 +127,14 @@ do_install()
   # which will not generate any output in 10 mins
   # leading travis build failure.
   brew install pyqt5 --with-python
+
+  # unlink gazebo8 collisions
+  brew uninstall gazebo7 || true
+  brew uninstall ignition-math2 || true
+  brew uninstall sdformat4 || true
+  brew uninstall ogre || true
+  brew install ogre1.9 || true
+  brew link ogre1.9 || true
 
   # Initialize and update rosdep
   if [ ! -d /etc/ros/rosdep/ ]; then
