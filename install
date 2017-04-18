@@ -99,10 +99,10 @@ do_install()
   # ROS infrastructure tools
   brew install libyaml || true
   pip install -U setuptools rosdep rosinstall_generator wstool rosinstall catkin_tools bloom empy sphinx pycurl
-  
+
   brew install --force qt5 || true
   brew link --force qt5 || true
-  
+
   brew remove pyqt5 || true
   # If installation failed with error:
   # .  Error: Failed to determine the detail of your Qt installation. Try again using
@@ -119,7 +119,7 @@ do_install()
   # .  brew install --force qt5
   # .  brew link --force qt5
   # (3) finally: brew install pyqt5 --with-python
-  # 
+  #
   # Note: the installation process may take long time,
   # which will not generate any output in 10 mins
   # leading travis build failure.
@@ -159,7 +159,7 @@ do_install()
   #   curl https://raw.githubusercontent.com/ros-visualization/rviz/hydro-devel/ogre_media/models/rviz_sphere.mesh > rviz_sphere.mesh
   #   popd
   # fi
-  
+
   # This patch originates from here: https://github.com/ros/catkin/pull/784
   if [ -d src/catkin ]; then
     pushd src/catkin/cmake
@@ -179,15 +179,15 @@ do_install()
     sudo mkdir -p ${ROS_INSTALL_DIR}
     sudo chown $USER ${ROS_INSTALL_DIR}
   fi
-  
+
   sudo chown -R $USER:admin /usr/local
   # TODO: change hardcoded version.
-  ln -s /usr/local/Cellar/qt5/5.8.0_1/mkspecs /usr/local/mkspecs || true
-  ln -s /usr/local/Cellar/qt5/5.8.0_1/plugins /usr/local/plugins || true
+  ln -s /usr/local/Cellar/qt/5.8.0_2/mkspecs /usr/local/mkspecs || true
+  ln -s /usr/local/Cellar/qt/5.8.0_2/plugins /usr/local/plugins || true
   ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5 || true
-  
+
   brew remove opencv || true
-  
+
   # Parallel build.
   catkin config --install  --install-space ${ROS_INSTALL_DIR} --cmake-args \
     -DCATKIN_ENABLE_TESTING=1 \
@@ -208,7 +208,7 @@ do_install()
   else
     echo "source ${ROS_INSTALL_DIR}/setup.bash" >> ~/.bash_profile
   fi
-  
+
   # Check for SIP if on OSX/macOS 10.11 (El Capitan) or later
   if [[ `sw_vers -productVersion` > "10.10" ]]
   then
