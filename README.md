@@ -9,7 +9,7 @@ _Updated version of this repo for my attempts at getting ROS running on MacOS Si
 
 **From the original:** This repo aims to maintain a usable, scripted, up-to-date installation procedure for
 [ROS](http://ros.org). The intent is that the `install` script may be executed on a
-bare Yosemite or El Capitan machine and produce a working desktop_full installation,
+bare Yosemite or El Capitan (_edit:_ and now Sierra) machine and produce a working desktop_full installation,
 including RQT, rviz, and Gazebo.
 
 This is the successor to my [popular gist on the same topic][1].
@@ -19,7 +19,7 @@ This is the successor to my [popular gist on the same topic][1].
 But First...
 ------------
 
-**Before you start - you should really, really (for you own sanity) remove your current Homebrew installation. This is guaranteed the simplest way to do this! You will then avoid entering a world of pain. A world of pain...***
+**Before you start - you should really, really (for you own sanity) remove your current Homebrew installation. This is guaranteed the simplest way to do this! You will then avoid entering a world of pain. A world of pain...**
 
 If you are worried about what you have installed in the past being lost, simply record the output of a `brew list` or `brew cask list` before you start. Then reinstall those formulas at the end (just don't add qt4 or opencv2 whatever you do...)  
 
@@ -47,14 +47,18 @@ Troubleshooting
 
 Here are a few notes on issues overcome (and which may resurface)...
 
+Many of these are similar (but not exactly so) to this post. It proved useful for ideas on how to solve:
+https://gist.github.com/plusk01/bb92f6159c0818000865784abfd2a584
 
-# `rosdep` failed with certificate errors 
+As it notes - if you get through the rosdep errors - you simply can work with the remaining catkin commands incrementally (just remember to then to do thremaining commands in the script at the end! All performed in the folder `kinetic_desktop_full_ws`).
+
+### `rosdep` failed with certificate errors 
 
 Because it used the urllib2 library to try and pull package lists over https and it seemed that the classic `<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed...`. On MacOS Sierra it has it's own certificates in `/etc/ssl` so I ran: `/usr/local/opt/openssl/bin/c_rehash /etc/ssl/`. 
 
 ### Rogue CUDA driver installed (even on Mac)
 
-This caused problematic linking with some of the dependencies that then detected CUDA being present. It was simpler
+This caused problematic linking with some of the dependencies that then detected CUDA being present. It was simpler just to complete remove it.
 
 ### dyld: Library not loaded
 
@@ -62,22 +66,21 @@ If you see this after installation, when trying to execute `rosrun`, then you ha
 
 ### QT5...
 
-ERROR: the following packages/stacks could not have their rosdep keys resolved
-to system dependencies:
-webkit_dependency: Cannot locate rosdep definition for [python-qt5-bindings-webkit]
+Manifested when running rosdep as:
+
+	ERROR: the following packages/stacks could not have their rosdep keys resolved to system dependencies:
+	webkit_dependency: Cannot locate rosdep definition for [python-qt5-bindings-webkit]
 
 Even if you fix this you will come up against: https://github.com/ros-infrastructure/rosdep/issues/490
 
 So, as suggested by this (and the other error mentioned in the main link above) by skipping the qt5 keys associated with our earlier manual installation of QT5 .
 
-rosdep install --from-paths src --ignore-src --rosdistro kinetic -y --as-root pip:no --skip-keys="python-qt5-bindings-webkit python-qt-bindings-qwt5 libqt5-core libqt5-gui libqt5-opengl libqt5-opengl-dev libqt5-widgets qt5-qmake qtbase5-dev python-qt-bindings python-qt-bindings-gl python-qt5-bindings python-qt5-bindings-gl"
+	rosdep install --from-paths src --ignore-src --rosdistro kinetic -y --as-root pip:no --skip-keys="python-qt5-bindings-webkit python-qt-bindings-qwt5 libqt5-core libqt5-gui libqt5-opengl libqt5-opengl-dev libqt5-widgets qt5-qmake qtbase5-dev python-qt-bindings python-qt-bindings-gl python-qt5-bindings python-qt5-bindings-gl"
 
 NOTE: the mechanism for directing rosdep is based on the earlier command that created and updated the contents of the folder:
 
-/etc/ros/rosdep/sources.list.d/
+	/etc/ros/rosdep/sources.list.d/
 
 In here are lists of the packages to install - based on their keys (which is what we use when we say skipkeys)…
 
-e.g. 20-default.list
-points to https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/osx-homebrew.yaml
-which in turn lists entries such as python-qt5-bindings etc - which we know are save to add to the list of skipkeys...
+e.g. `20-default.list` points to https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/osx-homebrew.yaml which in turn lists entries such as `python-qt5-bindings` etc.
