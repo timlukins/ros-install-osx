@@ -100,8 +100,8 @@ do_install()
   brew install libyaml || true
   pip install -U setuptools rosdep rosinstall_generator wstool rosinstall catkin_tools bloom empy sphinx pycurl
 
-	brew uninstall qt4 || true
-	brew uninstall qt4-no-webkit || true
+  #brew uninstall qt4 || true
+  #brew uninstall qt4-no-webkit || true
 
   brew install --force qt5 || true
   brew link --force qt5 || true
@@ -179,7 +179,7 @@ do_install()
   fi
 
   # Package dependencies.
-  rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y --as-root pip:no --skip-keys=python-qt-bindings-qwt5
+  rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y --as-root pip:no --skip-keys="python-qt5-bindings-webkit python-qt-bindings-qwt5 libqt5-core libqt5-gui libqt5-opengl libqt5-opengl-dev libqt5-widgets qt5-qmake qtbase5-dev python-qt-bindings python-qt-bindings-gl python-qt5-bindings python-qt5-bindings-gl"
   curl https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/uuid.patch | patch -p0
 
   # Clean out or create the install directory.
@@ -192,13 +192,13 @@ do_install()
   fi
 
   # TODO: change hardcoded version.
-  sudo ln -s /usr/local/Cellar/qt/5.8.0_2/mkspecs /usr/local/mkspecs || true
-  sudo chown -R $USER:admin /usr/local/Cellar/qt/5.8.0_2/mkspecs
-  sudo ln -s /usr/local/Cellar/qt/5.8.0_2/plugins /usr/local/plugins || true
-  sudo chown -R $USER:admin /usr/local/Cellar/qt/5.8.0_2/plugins
+  sudo ln -s /usr/local/Cellar/qt/5.9.0/mkspecs /usr/local/mkspecs || true
+  sudo chown -R $USER:admin /usr/local/Cellar/qt/5.9.0/mkspecs
+  sudo ln -s /usr/local/Cellar/qt/5.9.0/plugins /usr/local/plugins || true
+  sudo chown -R $USER:admin /usr/local/Cellar/qt/5.9.0/plugins
   ln -s /usr/local/share/sip/Qt5 /usr/local/share/sip/PyQt5 || true
-
-  brew remove opencv || true
+  
+  # brew remove opencv || true
 
   # Parallel build.
   catkin config --install  --install-space ${ROS_INSTALL_DIR} --cmake-args \
