@@ -1,7 +1,13 @@
-ros-install-osx   [![Build Status](https://travis-ci.org/mikepurvis/ros-install-osx.svg?branch=master)](https://travis-ci.org/mikepurvis/ros-install-osx)
+ros-install-osx   
 ===============
 
-This repo aims to maintain a usable, scripted, up-to-date installation procedure for
+_Updated version of this repo for my attempts at getting ROS running on MacOS Sierra 10.12.5 with XCode 8.8.3 and above._
+
+* Cloned from this excellent effort: https://github.com/tgu/ros-install-osx
+* In turn, based on: https://github.com/jundazhu/ros-install-osx
+* And the original: https://github.com/mikepurvis/ros-install-osx
+
+**From the original:** This repo aims to maintain a usable, scripted, up-to-date installation procedure for
 [ROS](http://ros.org). The intent is that the `install` script may be executed on a
 bare Yosemite or El Capitan machine and produce a working desktop_full installation,
 including RQT, rviz, and Gazebo.
@@ -10,125 +16,68 @@ This is the successor to my [popular gist on the same topic][1].
 
 [1]: https://gist.github.com/mikepurvis/9837958
 
+But First...
+------------
+
+**Before you start - you should really, really (for you own sanity) remove your current Homebrew installation. This is guaranteed the simplest way to do this! You will then avoid entering a world of pain. A world of pain...***
+
+If you are worried about what you have installed in the past being lost, simply record the output of a `brew list` or `brew cask list` before you start. Then reinstall those formulas at the end (just don't add qt4 or opencv2 whatever you do...)  
+
+How do you properly get rid of Homebrew? As described here: https://github.com/Homebrew/install - the command is:
+
+     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
+
+You should also do what it will report to you at the end about removing additional folders (e.g. `/usr/local/*`).
+
+**Also, if you have tried a variant of this or other scripts in the past, you may wish to remove the `/opt/ros` folder that may have been created. You'll probably need `sudo` to do that.** 
+
+*NOTE:* the script will itself re-install Homebrew (and make sure it is at the head of your path) as well as ensuring the crucial Homebrew install python is added as the first thing it does...
 
 Usage
 -----
 
-    curl https://raw.githubusercontent.com/mikepurvis/ros-install-osx/master/install | bash
-
-or
-
 ```shell
-git clone https://github.com/mikepurvis/ros-install-osx.git
+git clone https://github.com/timlukins/ros-install-osx.git
 cd ros-install-osx
 ./install
 ```
 
-Note that if you do not yet have XQuartz installed, you will be forced to log out and
-in after that installation, and re-run this script.
+Troubleshooting
+---------------
 
-You will be prompted for your sudo password at the following points in this process:
-
-   - Homebrew installation.
-   - Caskroom installation.
-   - XQuartz installation.
-   - Initializing rosdep.
-   - Creating and chowning your `/opt/ros/[distro]` folder.
-
-The installation can be done entirely without sudo if Homebrew and XQuartz are already
-installed, rosdep is already installed and initialized, and you set the `ROS_INSTALL_DIR`
-environment variable to a path which already exists and you have write access to.
+Here are a few notes on issues overcome (and which may resurface)...
 
 
-Step by Step
-------------
+# `rosdep` failed with certificate errors 
 
-The `install` script should just work for most users. However, if you run into trouble,
-it's a pretty big pain to rebuild everything. Note that in this scenario, it may make
-sense to treat the script as a list of instructions, and execute them one by one,
-manually.
+Because it used the urllib2 library to try and pull package lists over https and it seemed that the classic `<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed...`. On MacOS Sierra it has it's own certificates in `/etc/ssl` so I ran: `/usr/local/opt/openssl/bin/c_rehash /etc/ssl/`. 
 
-If you have a build fail, for example with rviz, note that you can modify the `catkin build`
-line to start at a particular package. Inside your `indigo_desktop_full_ws` dir, run:
+### Rogue CUDA driver installed (even on Mac)
 
-    catkin build --start-with rviz
+This caused problematic linking with some of the dependencies that then detected CUDA being present. It was simpler
 
-If you've resolved whatever issue stopped the build previously, this will pick up where
-it left off.
+### dyld: Library not loaded
 
+If you see this after installation, when trying to execute `rosrun`, then you have [System Integrity Protection](https://support.apple.com/en-us/HT204899) enabled.  The installation script should have detected that and *suggested* a quick fix. 
 
-## Troubleshooting
+### QT5...
 
-### Python and pip packages
+ERROR: the following packages/stacks could not have their rosdep keys resolved
+to system dependencies:
+webkit_dependency: Cannot locate rosdep definition for [python-qt5-bindings-webkit]
 
-Already-installed homebrew and pip packages are the most significant source of errors,
-especially pip packages linked against the system Python rather than Homebrew's Python,
-and Homebrew packages (like Ogre) where multiple versions end up installed, and things
-which depend on them end up linked to the different versions. If you have MacPorts or
-Fink installed, and Python from either of those is in your path, that will definitely
-be trouble.
+Even if you fix this you will come up against: https://github.com/ros-infrastructure/rosdep/issues/490
 
-The script makes _some_ attempt at detecting and warning about these situations, but some
-problems of this kind will only be visible as segfaults at runtime.
+So, as suggested by this (and the other error mentioned in the main link above) by skipping the qt5 keys associated with our earlier manual installation of QT5 .
 
-Unfortunately, it's pretty destructive to do so, but the most reliable way to give
-yourself a clean start is removing the current homebrew installation, and all
-currently-installed pip packages.
+rosdep install --from-paths src --ignore-src --rosdistro kinetic -y --as-root pip:no --skip-keys="python-qt5-bindings-webkit python-qt-bindings-qwt5 libqt5-core libqt5-gui libqt5-opengl libqt5-opengl-dev libqt5-widgets qt5-qmake qtbase5-dev python-qt-bindings python-qt-bindings-gl python-qt5-bindings python-qt5-bindings-gl"
 
-For pip: `pip freeze | xargs sudo pip uninstall -y`
+NOTE: the mechanism for directing rosdep is based on the earlier command that created and updated the contents of the folder:
 
-For homebrew, see the following: https://gist.github.com/mxcl/1173223
+/etc/ros/rosdep/sources.list.d/
 
-If you take these steps, obviously also remove your ROS workspace and start the install
-process over from scratch as well. Finally, audit your `$PATH` variable to ensure that
-when you run `python`, you're getting Homebrew's `python`.
-Another way to check which Python you are running is to do:
+In here are lists of the packages to install - based on their keys (which is what we use when we say skipkeys)…
 
-```bash
-which python # Should result in /usr/local/bin/python
-ls -l $(which python) # Should show a symlink pointing to Homebrew's Cellar
-```
-
-If you are getting permission errors when you `sudo uninstall` pip packages,
-see [Issue #11](https://github.com/mikepurvis/ros-install-osx/issues/11) and
-[this StackOverflow Q&A](http://stackoverflow.com/a/35051066/2653356).
-
-### El Capitan support
-
-The `install` script may not work as smoothly in OS X El Capitan.
-Here are some pointers, tips, and hacks to help you complete the installation.
-This list was compiled based on the discussion in [Issue #12](https://github.com/mikepurvis/ros-install-osx/issues/12).
-
-#### library not found for -ltbb
-
-See [Issue #4](https://github.com/mikepurvis/ros-install-osx/issues/4).
-You need to compile using Xcode's Command Line Tools:
-
-```shell
-xcode-select --install # Install the Command Line Tools
-sudo xcode-select -s /Library/Developer/CommandLineTools # Switch to using them
-gcc --version # Verify that you are compiling using Command Line Tools
-```
-
-The last command should output something that includes the following:
-
-```bash
-Configured with: --prefix=/Library/Developer/CommandLineTools/usr
-```
-
-You'll then have to rerun the entire `install` script or do the following:
-
-```bash
-rm -rf /opt/ros/indigo/* # More generally, /opt/ros/${ROS_DISTRO}/*
-rm -rf build/ devel/ # Assuming your working dir is the catkin workspace
-catkin build \
-  ... # See actual script for the 4-line-long command
-```
-
-#### dyld: Library not loaded
-
-If you see this after installation, when trying to execute `rosrun`, then you
-have [System Integrity Protection](https://support.apple.com/en-us/HT204899) enabled.
-The installation script should have detected that and *suggested* a quick fix.
-Please refer to the very last section of 
-[`install`](https://github.com/mikepurvis/ros-install-osx/blob/master/install)
+e.g. 20-default.list
+points to https://raw.githubusercontent.com/jundazhu/ros-install-osx/master/osx-homebrew.yaml
+which in turn lists entries such as python-qt5-bindings etc - which we know are save to add to the list of skipkeys...
